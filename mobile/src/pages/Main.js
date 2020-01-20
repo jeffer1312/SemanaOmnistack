@@ -7,6 +7,7 @@ import {MaterialIcons} from '@expo/vector-icons'
 import api from '../services/api';
 
 function Main({navigation}) {
+  //variaveis para setar os valores usados 
   const [currentRegion,setCurrentRegion]=useState(null);
   const [devs,setDevs]=useState([]);
   const [techs,setTechs]=useState('');
@@ -31,6 +32,7 @@ function Main({navigation}) {
 loadInitialPosition();
   },[]);
 
+  //funçao asyncrona para carregar os dev do banco de dados
   async function loadDevs(){
     const {latitude,longitude} = currentRegion;
     const response = await api.get('/search',{
@@ -44,7 +46,7 @@ loadInitialPosition();
     setDevs(response.data.devs);
   }
 
-
+//funçao para fazer a troca de localizaçao de acordo com a posiçao do mapa
     function handleRegionChanged(region){
       
       setCurrentRegion(region);
@@ -53,10 +55,12 @@ loadInitialPosition();
     return null;
   }
   return (
+    //view do mapa 
+    //join e usado para separar palavras
     <>
+    
   <MapView onRegionChangeComplete={handleRegionChanged}
-   initialRegion={currentRegion}
-    style={styles.map}>
+   initialRegion={currentRegion} style={styles.map}>
      {devs.map(dev => (
       <Marker 
       key={dev._id}
@@ -64,8 +68,7 @@ loadInitialPosition();
        latitude: dev.location.coordinates[1],
         longitude:dev.location.coordinates[0] 
         }}>
-     <Image 
-     style={styles.avatar} 
+     <Image style={styles.avatar} 
      source={{ uri:dev.avatar_url }}/>
      <Callout onPress={() => {
       navigation.navigate('Profile', {github_username : dev.github_username });
@@ -74,7 +77,9 @@ loadInitialPosition();
        <Text style={styles.devName}>{dev.name}</Text>
        <Text style={styles.devBio}>{dev.bio}</Text>
        <Text style={styles.devTechs}>{dev.techs.join(', ')}</Text>
+       
      </View>
+     
 
      </Callout>
 
@@ -99,7 +104,7 @@ loadInitialPosition();
   );
 }
 
-
+//Folhas de estilos
 const styles = StyleSheet.create({
   map:{
     flex:1,
